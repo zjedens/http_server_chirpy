@@ -50,15 +50,15 @@ func main() {
 	mux.Handle("/app/", config.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
 	mux.Handle("/app/assets/", config.middlewareMetricsInc(http.StripPrefix("/app/assets/", http.FileServer(http.Dir("assets")))))
 	mux.HandleFunc(
-		"GET /healthz",
+		"GET /api/healthz",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Content-Type", "text/plain; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("200 OK\n"))
 		},
 	)
-	mux.HandleFunc("GET /metrics", config.getMiddlewareMetrics)
-	mux.HandleFunc("POST /reset", config.resetMiddlewareMetrics)
+	mux.HandleFunc("GET /api/metrics", config.getMiddlewareMetrics)
+	mux.HandleFunc("POST /api/reset", config.resetMiddlewareMetrics)
 
 	server := http.Server{
 		Handler: mux,
