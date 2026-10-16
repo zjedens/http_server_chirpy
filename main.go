@@ -28,9 +28,17 @@ func (config *apiConfig) getMiddlewareMetrics(w http.ResponseWriter, r *http.Req
 	fmt.Println("Calling getMiddlewareMetrics(...)")
 
 	count := int(config.fileserverHits.Load())
-	w.Header().Add("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Hits: " + strconv.Itoa(count)))
+	metricsTemplate := `
+<html>
+  <body>
+    <h1>Welcome, Chirpy Admin</h1>
+    <p>Chirpy has been visited %d times!</p>
+  </body>
+</html>
+`
+	w.Write([]byte(fmt.Sprintf(metricsTemplate, count)))
 }
 
 func (config *apiConfig) resetMiddlewareMetrics(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +65,8 @@ func main() {
 			w.Write([]byte("200 OK\n"))
 		},
 	)
-	mux.HandleFunc("GET /api/metrics", config.getMiddlewareMetrics)
-	mux.HandleFunc("POST /api/reset", config.resetMiddlewareMetrics)
+	mux.HandleFunc("GET /admin/metrics", config.getMiddlewareMetrics)
+	mux.HandleFunc("POST /admin/reset", config.resetMiddlewareMetrics)
 
 	server := http.Server{
 		Handler: mux,
