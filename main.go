@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	api "github.com/zjedens/api/config"
+	config "github.com/zjedens/api/config"
 	handler "github.com/zjedens/api/handler"
 )
 
 func main() {
-	config := api.ApiConfig{}
+	config := config.ApiConfig{}
 	mux := http.NewServeMux()
 	mux.Handle("/app/", config.MiddlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
 	mux.Handle("/app/assets/", config.MiddlewareMetricsInc(http.StripPrefix("/app/assets/", http.FileServer(http.Dir("assets")))))
