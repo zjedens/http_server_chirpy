@@ -1,14 +1,30 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 
 	config "github.com/zjedens/api/config"
+
 	handler "github.com/zjedens/api/handler"
 )
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Failed to load .env config: %v", err)
+	}
+	dbUrl := os.Getenv(".env")
+	db, err := sql.Open("postgres", dbUrl)
+	if err != nil {
+		log.Fatalf("Failed to connect to backend: %v", err)
+	}
+
 	config := config.ApiConfig{}
 	mux := http.NewServeMux()
 	mux.Handle("/app/", config.MiddlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(".")))))

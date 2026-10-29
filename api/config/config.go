@@ -5,10 +5,14 @@ import (
 	"net/http"
 	"strconv"
 	"sync/atomic"
+
+	_ "github.com/lib/pq"
+	"github.com/pressly/goose/v3/database"
 )
 
 type ApiConfig struct {
 	fileserverHits atomic.Int32
+	queries        *database.Queries
 }
 
 func (config *ApiConfig) MiddlewareMetricsInc(next http.Handler) http.Handler {
